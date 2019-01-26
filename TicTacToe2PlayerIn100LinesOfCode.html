@@ -1,0 +1,100 @@
+<html>
+  <head><title>Tic Tac Toe 2 Player Game</title></head>
+  <body>
+    <p id="noteText">2 Player Tic Tac Toe Game</p>    
+    <div id="gamePlayScreen"></div>
+    <p id="endGameMessage"></p>
+    <div id="playAgainButton">Play again!</div>
+  </body>
+</html>
+<style>
+	html {
+	  font-size: 30px;
+	  margin-left: 10%;
+	}
+
+	#gamePlayScreen {
+	  width: 270px;
+	}
+
+	.ticTacToeButtons, #playAgainButton {
+	  background-color: #333333;
+	  height: 80px;
+	  width: 80px;
+	  margin: 2px 4px;
+	  font-size: 60px;
+	  display: inline-block;
+	  color: white;
+	  text-align: center;
+	  overflow: hidden;
+	}
+
+	#playAgainButton {
+	  height: 40px;
+	  width: 180px;
+	  display: none;
+	  font-size: 30px;
+	}
+</style>
+<script>
+	for (let i = 0; i < 9; i++){
+	  document.getElementById("gamePlayScreen").innerHTML += '<div id="' + i.toString() + '" class="ticTacToeButtons"></div>';
+	}
+
+	let turn = "x";
+	let gameStatus = "unfinished";
+	let winningIndices;
+	let board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+	const winningVariations = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+
+	Array.from(document.getElementsByClassName("ticTacToeButtons")).forEach(function(x){
+	  x.onclick = function(){
+		if (gameStatus == "unfinished"){
+		  if (this.innerHTML == "") {
+			this.innerHTML = turn;
+			board[parseInt(this.id)] = turn;
+			gameStatus = checkWinner(board);
+			turn == "x" ? turn = "o" : turn = "x";
+			if (gameStatus != "unfinished") {
+			  document.getElementById("playAgainButton").style.display = "block";
+			  if (gameStatus == "draw"){
+				document.getElementById("endGameMessage").innerHTML = "It's a draw!";
+			  } else {
+				gameStatus == "x" ? document.getElementById("endGameMessage").innerHTML = "x wins!" : document.getElementById("endGameMessage").innerHTML = "o wins!";
+				for (var i = 0; i < winningIndices.length; i++){
+				  document.getElementById(winningIndices[i].toString()).style.backgroundColor = "olive";
+				}
+			  }
+			}
+		  }
+		}
+	  }
+	});
+
+	document.getElementById("playAgainButton").onclick = function(){
+	  board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+	  gameStatus = "unfinished";
+	  document.getElementById("playAgainButton").style.display = "none";
+	  document.getElementById("endGameMessage").innerHTML = "";
+	  Array.from(document.getElementsByClassName("ticTacToeButtons")).forEach(function(x){
+		x.innerHTML = "";
+		x.style.backgroundColor = "#333333";
+	  });
+	}
+
+	function checkWinner(board) {
+	  const winX = "xxx";
+	  const winO = "ooo";
+	  for (let i = 0; i < winningVariations.length; i++){
+		let line = [board[winningVariations[i][0]], board[winningVariations[i][1]], board[winningVariations[i][2]]].join("");
+		if (line == winX || line == winO){
+		  winningIndices = winningVariations[i];
+		  return line[0];
+		}
+	  }
+	  if (board.filter((val) => val == 0).length > 0){
+		return "unfinished"; 
+	  }
+	  return "draw";
+	}
+</script>
